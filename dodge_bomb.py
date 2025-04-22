@@ -43,14 +43,14 @@ def main():
     kk_base_img = pg.image.load("fig/3.png")  # 基本は左向き画像
     kk_gyaku_img = pg.transform.flip(kk_base_img,True,False)
     kk_imgs = {
-    (0, 0): pg.transform.rotozoom(kk_base_img, 0, 0.9),       # 静止
-    (0, -5): pg.transform.rotozoom(kk_base_img, -90, 0.9),    # 上
-    (0, +5): pg.transform.rotozoom(kk_base_img, 90, 0.9),     # 下
-    (-5, 0): pg.transform.rotozoom(kk_base_img, 0, 0.9),      # 左（デフォルト）
-    (+5, 0): pg.transform.rotozoom(kk_gyaku_img, 0, 0.9),    # 右
+    (0, 0): pg.transform.rotozoom(kk_base_img, 0, 0.9),  # 静止
+    (0, -5): pg.transform.rotozoom(kk_base_img, -90, 0.9),  # 上
+    (0, +5): pg.transform.rotozoom(kk_base_img, 90, 0.9),  # 下
+    (-5, 0): pg.transform.rotozoom(kk_base_img, 0, 0.9),  # 左（デフォルト）
+    (+5, 0): pg.transform.rotozoom(kk_gyaku_img, 0, 0.9),  # 右
 
-    (-5, -5): pg.transform.rotozoom(kk_base_img, -45, 0.9),   # 左上
-    (-5, +5): pg.transform.rotozoom(kk_base_img, 45, 0.9),    # 左下
+    (-5, -5): pg.transform.rotozoom(kk_base_img, -45, 0.9),  # 左上
+    (-5, +5): pg.transform.rotozoom(kk_base_img, 45, 0.9),  # 左下
     (+5, -5): pg.transform.rotozoom(kk_gyaku_img, 45, 0.9),  # 右上
     (+5, +5): pg.transform.rotozoom(kk_gyaku_img, -45, 0.9),   # 右下
 }
