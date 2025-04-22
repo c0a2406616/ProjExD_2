@@ -34,6 +34,29 @@ def main():
     }
     bg_img = pg.image.load("fig/pg_bg.jpg")    
     kk_img = pg.transform.rotozoom(pg.image.load("fig/3.png"), 0, 0.9)
+    kk_img_gameover = pg.transform.rotozoom(pg.image.load("fig/8.png"), 0, 0.9)
+    blackout = pg.Surface((WIDTH, HEIGHT))
+    blackout.set_alpha(150)
+    blackout.fill((0, 0, 0))
+    screen.blit(blackout, (0, 0))
+    # 向きによる画像たち
+    kk_base_img = pg.image.load("fig/3.png")  # 基本は左向き画像
+    kk_gyaku_img = pg.transform.flip(kk_base_img,True,False)
+    kk_imgs = {
+    (0, 0): pg.transform.rotozoom(kk_base_img, 0, 0.9),       # 静止
+    (0, -5): pg.transform.rotozoom(kk_base_img, -90, 0.9),    # 上
+    (0, +5): pg.transform.rotozoom(kk_base_img, 90, 0.9),     # 下
+    (-5, 0): pg.transform.rotozoom(kk_base_img, 0, 0.9),      # 左（デフォルト）
+    (+5, 0): pg.transform.rotozoom(kk_gyaku_img, 0, 0.9),    # 右
+
+    (-5, -5): pg.transform.rotozoom(kk_base_img, -45, 0.9),   # 左上
+    (-5, +5): pg.transform.rotozoom(kk_base_img, 45, 0.9),    # 左下
+    (+5, -5): pg.transform.rotozoom(kk_gyaku_img, 45, 0.9),  # 右上
+    (+5, +5): pg.transform.rotozoom(kk_gyaku_img, -45, 0.9),   # 右下
+}
+
+
+
     kk_rct = kk_img.get_rect()
     kk_rct.center = 300, 200
     #爆弾初期化
@@ -52,9 +75,28 @@ def main():
                 return
         screen.blit(bg_img, [0, 0]) 
 
-        # こうかとんと重なっていたら
+        # こうかとんと重なっていたらゲームオーバー
         if kk_rct.colliderect(bb_rct):
-            print("Game Over")
+            blackout = pg.Surface((WIDTH, HEIGHT))
+            blackout.set_alpha(150)
+            blackout.fill((0, 0, 0))
+            screen.blit(blackout, (0, 0))
+            screen.blit(kk_img_gameover, kk_rct)
+            # game over テキスト
+            fonto = pg.font.Font(None,80)
+            txt = fonto.render("Game Over",True, (255,255,255))
+            txt_rect = txt.get_rect(center=(WIDTH // 2, HEIGHT // 2))
+            screen.blit(txt,txt_rect)
+            # こうかとん（泣いてる）画像を左右に表示
+            icon_img = pg.transform.rotozoom(kk_img_gameover, 0, 1)
+            icon_w = icon_img.get_width()
+            icon_h = icon_img.get_height()
+
+            # テキストの左右にアイコンを配置
+            screen.blit(icon_img, (txt_rect.left - icon_w - 10, txt_rect.centery - icon_h // 2))  # 左側
+            screen.blit(icon_img, (txt_rect.right + 10, txt_rect.centery - icon_h // 2))         # 右側
+            pg.display.update()
+            pg.time.wait(5000)
             return
 
         key_lst = pg.key.get_pressed()
@@ -64,20 +106,22 @@ def main():
                 sum_mv[0] += mv[0]  # 左右方向
                 sum_mv[1] += mv[1]  # 上下方向
 
-        #if key_lst[pg.K_UP]:
-            #sum_mv[1] -= 5
-        #if key_lst[pg.K_DOWN]:
-         #   sum_mv[1] += 5
-        #if key_lst[pg.K_LEFT]:
-            #sum_mv[0] -= 5
-        #if key_lst[pg.K_RIGHT]:
-            #sum_mv[0] += 5
+
+        # 画像切り替え
+        sum_mv = [0, 0]
+        for key, mv in DELTA.items():
+            if key_lst[key]:
+                sum_mv[0] += mv[0]
+                sum_mv[1] += mv[1]
+        kk_img = kk_imgs.get(tuple(sum_mv), kk_imgs[(0, 0)])
+        
+
         kk_rct.move_ip(sum_mv)
         if check_bound(kk_rct) != (True,True):  # 画面の外だったら
             kk_rct.move_ip(-sum_mv[0],-sum_mv[1])
         bb_rct.move_ip(vx,vy)  # 爆弾の移動　練習２
         yoko, tate = check_bound(bb_rct)
-        if not yoko: #左右どちらかにはみ出ていたら
+        if not yoko: # 左右どちらかにはみ出ていたら
             vx *= -1
         if not tate:
             vy *= -1
