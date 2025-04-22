@@ -7,6 +7,21 @@ import pygame as pg
 WIDTH, HEIGHT = 1100, 650
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
+def check_bound(rct:pg.Rect) -> tuple[bool,bool]:
+    """
+    引数：こうかとんRectまたは爆弾Rect
+    戻り値：タプル（横方向判定結果、縦方向判定結果）
+    画面内ならTrue,画面買いならFalse
+    """
+    yoko, tate = True, True
+     #横縦方向用の変数
+    # 横方向判定
+    if rct.left < 0 or WIDTH < rct.right:  # 画面ないだったら
+        yoko = False
+    if rct.top < 0 or HEIGHT < rct.bottom:  # 画面ないだったら
+        tate = False
+    return yoko,tate
+
 
 def main():
     pg.display.set_caption("逃げろ！こうかとん")
@@ -27,7 +42,7 @@ def main():
     bb_rct = bb_img.get_rect()
     bb_rct.center = random.randint(0,WIDTH),random.randint(0,HEIGHT)
     bb_img.set_colorkey((0, 0, 0))
-    vx,vy = (+5,+5)
+    vx,vy = (+5,+5)  #　練習２
     
     clock = pg.time.Clock()
     tmr = 0
@@ -53,7 +68,14 @@ def main():
         #if key_lst[pg.K_RIGHT]:
             #sum_mv[0] += 5
         kk_rct.move_ip(sum_mv)
-        bb_rct.move_ip(vx,vy)  # 爆弾の移動
+        if check_bound(kk_rct) != (True,True):  # 画面の外だったら
+            kk_rct.move_ip(-sum_mv[0],-sum_mv[1])
+        bb_rct.move_ip(vx,vy)  # 爆弾の移動　練習２
+        yoko, tate = check_bound(bb_rct)
+        if not yoko: #左右どちらかにはみ出ていたら
+            vx *= -1
+        if not tate:
+            vy *= -1
         screen.blit(kk_img, kk_rct)
         screen.blit(bb_img, bb_rct)
         pg.display.update()
