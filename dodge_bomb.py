@@ -62,6 +62,20 @@ def main():
     #爆弾初期化
     bb_img = pg.Surface((20,20))
     pg.draw.circle(bb_img, (255, 0, 0), (10, 10), 10)
+
+
+    #拡大
+    bb_imgs = []
+    for r in range(1, 11):
+        bb_img = pg.Surface((20*r, 20*r))
+        pg.draw.circle(bb_img, (255, 0, 0), (10*r, 10*r), 10*r)
+        bb_img.set_colorkey((0, 0, 0))
+        bb_imgs.append(bb_img)
+
+    # 加速度リストを作成
+    bb_accs = [a for a in range(1, 11)]
+
+    bb_img = bb_imgs[0]
     bb_rct = bb_img.get_rect()
     bb_rct.center = random.randint(0,WIDTH),random.randint(0,HEIGHT)
     bb_img.set_colorkey((0, 0, 0))
@@ -114,11 +128,21 @@ def main():
                 sum_mv[0] += mv[0]
                 sum_mv[1] += mv[1]
         kk_img = kk_imgs.get(tuple(sum_mv), kk_imgs[(0, 0)])
-        
+
 
         kk_rct.move_ip(sum_mv)
         if check_bound(kk_rct) != (True,True):  # 画面の外だったら
             kk_rct.move_ip(-sum_mv[0],-sum_mv[1])
+
+
+        #爆弾の画像と速度を時間経過とともに更新
+        bb_img = bb_imgs[min(tmr//500, 9)]
+        avx = vx*bb_accs[min(tmr//500, 9)]
+        avy = vy*bb_accs[min(tmr//500, 9)]
+
+
+        bb_rct.move_ip(avx, avy) # 加速された速度で移動
+
         bb_rct.move_ip(vx,vy)  # 爆弾の移動　練習２
         yoko, tate = check_bound(bb_rct)
         if not yoko: # 左右どちらかにはみ出ていたら
