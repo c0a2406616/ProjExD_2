@@ -27,10 +27,10 @@ def main():
     pg.display.set_caption("逃げろ！こうかとん")
     screen = pg.display.set_mode((WIDTH, HEIGHT))
     DELTA = {
-        pg.K_UP:(0, -5),
-        pg.K_DOWN:(0, +5),
-        pg.K_LEFT:(-5, 0),
-        pg.K_RIGHT:(+5, 0),
+        pg.K_UP:(0,-5),
+        pg.K_DOWN:(0,+5),
+        pg.K_LEFT:(-5,0),
+        pg.K_RIGHT:(+5,0),
     }
     bg_img = pg.image.load("fig/pg_bg.jpg")    
     kk_img = pg.transform.rotozoom(pg.image.load("fig/3.png"), 0, 0.9)
